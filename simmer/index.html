@@ -1,1 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simmer - Share & Discover Amazing Recipes</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-wrapper">
+                <div class="logo">
+                    <span class="logo-icon">🍳</span>
+                    <span class="logo-text">Simmer</span>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#recipes">Recipes</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+                    <span class="theme-icon">🌙</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">Welcome to <span class="highlight">Simmer</span></h1>
+                <p class="hero-subtitle">Discover, Share & Cook Extraordinary Recipes</p>
+                <p class="hero-description">Join our community of passionate home cooks and explore thousands of delicious recipes from around the world. Share your culinary creations and inspire others.</p>
+                <button class="cta-button">Start Exploring</button>
+            </div>
+            <div class="hero-visual">
+                <div class="floating-card card-1">
+                    <span class="emoji">🍝</span>
+                </div>
+                <div class="floating-card card-2">
+                    <span class="emoji">🍜</span>
+                </div>
+                <div class="floating-card card-3">
+                    <span class="emoji">🥗</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Recipes Section -->
+    <section class="recipes" id="recipes">
+        <div class="container">
+            <div class="section-header">
+                <h2>Featured Recipes</h2>
+                <p>Handpicked delicious recipes to inspire your cooking journey</p>
+            </div>
+            
+            <div class="recipe-grid">
+                <!-- Recipe Card 1 -->
+                <div class="recipe-card">
+                    <div class="recipe-image" style="background: linear-gradient(135deg, #FF6B6B, #FF8E72);">
+                        <span class="emoji-large">🍕</span>
+                    </div>
+                    <div class="recipe-content">
+                        <div class="recipe-tag">Italian</div>
+                        <h3>Margherita Pizza</h3>
+                        <p>Classic Italian pizza with fresh mozzarella, basil, and tomato sauce</p>
+                        <div class="recipe-meta">
+                            <span>⏱️ 30 min</span>
+                            <span>👥 4 servings</span>
+                        </div>
+                        <button class="recipe-button">View Recipe</button>
+                    </div>
+                </div>
+
+                <!-- Recipe Card 2 -->
+                <div class="recipe-card">
+                    <div class="recipe-image" style="background: linear-gradient(135deg, #4ECDC4, #44A7C6);">
+                        <span class="emoji-large">🍣</span>
+                    </div>
+                    <div class="recipe-content">
+                        <div class="recipe-tag">Japanese</div>
+                        <h3>Spicy Tuna Roll</h3>
+                        <p>Fresh sushi rolls with spicy tuna, cucumber, and avocado</p>
+                        <div class="recipe-meta">
+                            <span>⏱️ 25 min</span>
+                            <span>👥 2 servings</span>
+                        </div>
+                        <button class="recipe-button">View Recipe</button>
+                    </div>
+                </div>
+
+                <!-- Recipe Card 3 -->
+                <div class="recipe-card">
+                    <div class="recipe-image" style="background: linear-gradient(135deg, #F7B731, #F8C74F);">
+                        <span class="emoji-large">🍔</span>
+                    </div>
+                    <div class="recipe-content">
+                        <div class="recipe-tag">American</div>
+                        <h3>Gourmet Burger</h3>
+                        <p>Juicy beef patty with aged cheddar, caramelized onions, and special sauce</p>
+                        <div class="recipe-meta">
+                            <span>⏱️ 20 min</span>
+                            <span>👥 2 servings</span>
+                        </div>
+                        <button class="recipe-button">View Recipe</button>
+                    </div>
+                </div>
+
+                <!-- Recipe Card 4 -->
+                <div class="recipe-card">
+                    <div class="recipe-image" style="background: linear-gradient(135deg, #95E1D3, #38ADA9);">
+                        <span class="emoji-large">🥙</span>
+                    </div>
+                    <div class="recipe-content">
+                        <div class="recipe-tag">Mediterranean</div>
+                        <h3>Falafel Wrap</h3>
+                        <p>Crispy falafel with hummus, vegetables, and tahini sauce</p>
+                        <div class="recipe-meta">
+                            <span>⏱️ 35 min</span>
+                            <span>👥 3 servings</span>
+                        </div>
+                        <button class="recipe-button">View Recipe</button>
+                    </div>
+                </div>
+
+                <!-- Recipe Card 5 -->
+                <div class="recipe-card">
+                    <div class="recipe-image" style="background: linear-gradient(135deg, #F38181, #AA96DA);">
+                        <span class="emoji-large">🍜</span>
+                    </div>
+                    <div class="recipe-content">
+                        <div class="recipe-tag">Asian</div>
+                        <h3>Tom Yum Soup</h3>
+                        <p>Spicy Thai soup with shrimp, lemongrass, and lime</p>
+                        <div class="recipe-meta">
+                            <span>⏱️ 20 min</span>
+                            <span>👥 4 servings</span>
+                        </div>
+                        <button class="recipe-button">View Recipe</button>
+                    </div>
+                </div>
+
+                <!-- Recipe Card 6 -->
+                <div class="recipe-card">
+                    <div class="recipe-image" style="background: linear-gradient(135deg, #FCBAD3, #FFFFD2);">
+                        <span class="emoji-large">🍰</span>
+                    </div>
+                    <div class="recipe-content">
+                        <div class="recipe-tag">Dessert</div>
+                        <h3>Chocolate Cake</h3>
+                        <p>Decadent dark chocolate cake with silky ganache frosting</p>
+                        <div class="recipe-meta">
+                            <span>⏱️ 45 min</span>
+                            <span>👥 8 servings</span>
+                        </div>
+                        <button class="recipe-button">View Recipe</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="about">
+        <div class="container">
+            <div class="section-header">
+                <h2>Why Choose Simmer?</h2>
+                <p>Your ultimate destination for culinary inspiration</p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-item">
+                    <div class="feature-icon">👨‍🍳</div>
+                    <h3>Share Your Recipes</h3>
+                    <p>Publish your favorite recipes and build your cooking portfolio</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">🌍</div>
+                    <h3>Global Community</h3>
+                    <p>Connect with food enthusiasts from around the world</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">⭐</div>
+                    <h3>Rating System</h3>
+                    <p>Rate and review recipes to help others find the best dishes</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">📚</div>
+                    <h3>Easy to Search</h3>
+                    <p>Find recipes by cuisine, ingredients, or cooking time</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action Section -->
+    <section class="cta-section">
+        <div class="container">
+            <h2>Ready to Start Cooking?</h2>
+            <p>Join thousands of food lovers sharing their passion on Simmer</p>
+            <button class="cta-button-large">Join Our Community</button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer" id="contact">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Simmer</h4>
+                    <p>Share & discover amazing recipes</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#recipes">Recipes</a></li>
+                        <li><a href="#about">About</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Follow Us</h4>
+                    <div class="social-links">
+                        <a href="#">Facebook</a>
+                        <a href="#">Twitter</a>
+                        <a href="#">Instagram</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Keracard™ Simmer. All rights reserved</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
 
