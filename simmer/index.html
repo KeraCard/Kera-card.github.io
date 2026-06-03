@@ -57,114 +57,17 @@
             <div class="section-header">
                 <h2>Featured Recipes</h2>
                 <p>Handpicked delicious recipes to inspire your cooking journey</p>
+                <!-- Added a clear button for moms to jump straight to the upload page -->
+                <a href="upload.html" class="cta-button" style="display: inline-block; margin-top: 1rem; text-decoration: none; text-align: center;">+ Share A Recipe</a>
             </div>
             
-            <div class="recipe-grid">
-                <!-- Recipe Card 1 -->
-                <div class="recipe-card">
-                    <div class="recipe-image" style="background: linear-gradient(135deg, #FF6B6B, #FF8E72);">
-                        <span class="emoji-large">🍕</span>
-                    </div>
-                    <div class="recipe-content">
-                        <div class="recipe-tag">Italian</div>
-                        <h3>Margherita Pizza</h3>
-                        <p>Classic Italian pizza with fresh mozzarella, basil, and tomato sauce</p>
-                        <div class="recipe-meta">
-                            <span>⏱️ 30 min</span>
-                            <span>👥 4 servings</span>
-                        </div>
-                        <button class="recipe-button">View Recipe</button>
-                    </div>
-                </div>
-
-                <!-- Recipe Card 2 -->
-                <div class="recipe-card">
-                    <div class="recipe-image" style="background: linear-gradient(135deg, #4ECDC4, #44A7C6);">
-                        <span class="emoji-large">🍣</span>
-                    </div>
-                    <div class="recipe-content">
-                        <div class="recipe-tag">Japanese</div>
-                        <h3>Spicy Tuna Roll</h3>
-                        <p>Fresh sushi rolls with spicy tuna, cucumber, and avocado</p>
-                        <div class="recipe-meta">
-                            <span>⏱️ 25 min</span>
-                            <span>👥 2 servings</span>
-                        </div>
-                        <button class="recipe-button">View Recipe</button>
-                    </div>
-                </div>
-
-                <!-- Recipe Card 3 -->
-                <div class="recipe-card">
-                    <div class="recipe-image" style="background: linear-gradient(135deg, #F7B731, #F8C74F);">
-                        <span class="emoji-large">🍔</span>
-                    </div>
-                    <div class="recipe-content">
-                        <div class="recipe-tag">American</div>
-                        <h3>Gourmet Burger</h3>
-                        <p>Juicy beef patty with aged cheddar, caramelized onions, and special sauce</p>
-                        <div class="recipe-meta">
-                            <span>⏱️ 20 min</span>
-                            <span>👥 2 servings</span>
-                        </div>
-                        <button class="recipe-button">View Recipe</button>
-                    </div>
-                </div>
-
-                <!-- Recipe Card 4 -->
-                <div class="recipe-card">
-                    <div class="recipe-image" style="background: linear-gradient(135deg, #95E1D3, #38ADA9);">
-                        <span class="emoji-large">🥙</span>
-                    </div>
-                    <div class="recipe-content">
-                        <div class="recipe-tag">Mediterranean</div>
-                        <h3>Falafel Wrap</h3>
-                        <p>Crispy falafel with hummus, vegetables, and tahini sauce</p>
-                        <div class="recipe-meta">
-                            <span>⏱️ 35 min</span>
-                            <span>👥 3 servings</span>
-                        </div>
-                        <button class="recipe-button">View Recipe</button>
-                    </div>
-                </div>
-
-                <!-- Recipe Card 5 -->
-                <div class="recipe-card">
-                    <div class="recipe-image" style="background: linear-gradient(135deg, #F38181, #AA96DA);">
-                        <span class="emoji-large">🍜</span>
-                    </div>
-                    <div class="recipe-content">
-                        <div class="recipe-tag">Asian</div>
-                        <h3>Tom Yum Soup</h3>
-                        <p>Spicy Thai soup with shrimp, lemongrass, and lime</p>
-                        <div class="recipe-meta">
-                            <span>⏱️ 20 min</span>
-                            <span>👥 4 servings</span>
-                        </div>
-                        <button class="recipe-button">View Recipe</button>
-                    </div>
-                </div>
-
-                <!-- Recipe Card 6 -->
-                <div class="recipe-card">
-                    <div class="recipe-image" style="background: linear-gradient(135deg, #FCBAD3, #FFFFD2);">
-                        <span class="emoji-large">🍰</span>
-                    </div>
-                    <div class="recipe-content">
-                        <div class="recipe-tag">Dessert</div>
-                        <h3>Chocolate Cake</h3>
-                        <p>Decadent dark chocolate cake with silky ganache frosting</p>
-                        <div class="recipe-meta">
-                            <span>⏱️ 45 min</span>
-                            <span>👥 8 servings</span>
-                        </div>
-                        <button class="recipe-button">View Recipe</button>
-                    </div>
-                </div>
+            <!-- This container maps directly to your script.js dynamic database engine -->
+            <div id="recipe-feed" class="recipe-grid">
+                <p class="loading-text">Cooking up today's fresh user recipes...</p>  
             </div>
-        </div>
-    </section>
-
+        </div> <!-- Closed container -->
+    </section> <!-- Closed recipes section properly -->
+    
     <!-- Features Section -->
     <section class="features" id="about">
         <div class="container">
