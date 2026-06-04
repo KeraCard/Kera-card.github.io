@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile | Simmer</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; transition: background-color 0.3s ease; }
+        .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); }
+        .dark .glass { background: rgba(15, 23, 42, 0.8); }
+        .recipe-card:hover .delete-btn { opacity: 1; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen">
+
+    <!-- Nav -->
+    <nav class="sticky top-0 z-40 border-b border-slate-200 dark:border-slate-800 glass">
+        <div class="max-w-5xl mx-auto px-6 h-20 flex items-center justify-between">
+            <a href="home.html" class="flex items-center gap-2 hover:opacity-80 transition">
+                <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                <span class="font-bold text-xl tracking-tight">Feed</span>
+            </a>
+            <div class="flex items-center gap-4">
+                <i data-lucide="flame" class="w-7 h-7 text-orange-600"></i>
+                <button onclick="logout()" class="text-sm font-medium text-red-500 hover:text-red-600">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-4xl mx-auto px-6 py-12">
+        <!-- Profile Header -->
+        <div class="flex flex-col md:flex-row items-center gap-8 mb-16 pb-12 border-b border-slate-200 dark:border-slate-800">
+            <div class="relative group">
+                <img id="user-avatar" src="https://via.placeholder.com/150" class="w-32 h-32 rounded-full border-4 border-white dark:border-slate-900 shadow-xl object-cover">
+                <div class="absolute inset-0 rounded-full bg-black/20 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                    <i data-lucide="camera" class="text-white w-6 h-6"></i>
+                </div>
+            </div>
+            
+            <div class="flex-1 text-center md:text-left">
+                <h1 id="user-name" class="text-4xl font-extrabold mb-2 leading-tight">...</h1>
+                <p id="user-email" class="text-slate-500 mb-4 font-medium"></p>
+                
+                <div class="relative max-w-lg">
+                    <textarea id="user-bio" onblur="updateBio()" placeholder="Tell the world about your cooking..." 
+                        class="w-full bg-transparent border-none p-0 resize-none focus:ring-0 text-slate-600 dark:text-slate-400 italic text-lg outline-none"></textarea>
+                    <div class="text-[10px] uppercase tracking-widest text-slate-400 mt-1">Click above to edit your bio</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Recipes -->
+        <div>
+            <div class="flex items-center justify-between mb-8">
+                <h2 class="text-2xl font-bold flex items-center gap-3">
+                    <i data-lucide="book-open" class="text-orange-500"></i>
+                    My Creations
+                </h2>
+                <span id="recipe-count" class="text-sm font-semibold bg-slate-200 dark:bg-slate-800 px-3 py-1 rounded-full">0 Recipes</span>
+            </div>
+
+            <div id="user-recipe-feed" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Recipes populate here -->
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const SB_URL = "https://czvxkgamjhvwupbnwdoh.supabase.co";
+        const SB_KEY = "sb_publishable_Ap5CvQQTTXCwyOVgFBd1Rg_Np0CBHEZ";
+        const supabase = supabase.createClient(SB_URL, SB_KEY);
+
+        // System Theme
+        function applyTheme() {
+            if (window.matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.classList.add('dark');
+            else document.documentElement.classList.remove('dark');
+        }
+        applyTheme();
+
+        async function loadProfile() {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) return window.location.href = 'home.html';
+
+            // Set basic info from Google Auth
+            document.getElementById('user-name').innerText = user.user_metadata.full_name || 'Chef';
+            document.ge
