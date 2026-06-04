@@ -906,6 +906,8 @@
             }
         }
     </style>
+    <!-- Supabase Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
     <!-- ========== LOGIN PAGE ========== -->
@@ -984,10 +986,15 @@
     <a href="create.html" class="fab" title="Create Recipe">+</a>
 
     <script>
+        // ========== SUPABASE CONFIGURATION ==========
+        const SUPABASE_URL = "https://czvxkgamjhvwupbnwdoh.supabase.co";
+        const SUPABASE_ANON_KEY = "sb_publishable_Ap5CvQQTTXCwyOVgFBd1Rg_Np0CBHEZ";
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
         // ========== STATE MANAGEMENT ==========
         let currentUser = null;
         let currentTheme = localStorage.getItem('theme') || 'light';
-        let recipes = JSON.parse(localStorage.getItem('recipes')) || [];
+        let recipes = [];
         let selectedTag = 'General';
         let uploadedImage = null;
 
@@ -1087,8 +1094,34 @@
         }
 
         // ========== RECIPE FUNCTIONS ==========
-        function loadRecipes() {
+        async function loadRecipes() {
             const container = document.getElementById('recipesContainer');
+            container.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Loading recipes...</p>';
+
+            try {
+                // Fetch from Supabase
+                const { data, error } = await supabase
+                    .from('recipes')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                recipes = (data || []).map(recipe => ({
+                    id: recipe.id,
+                    name: recipe.name,
+                    ingredients: recipe.ingredients,
+                    tag: recipe.tag,
+                    creator: recipe.creator,
+                    creatorId: recipe.creator_id,
+                    image: recipe.image,
+                    createdAt: recipe.created_at
+                }));
+            } catch (error) {
+                console.error('Error loading recipes:', error);
+                recipes = [];
+            }
+
             container.innerHTML = '';
 
             if (recipes.length === 0) {
@@ -1190,12 +1223,17 @@
             selectedTag = element.getAttribute('data-tag');
         }
 
-        function createRecipe() {
+        async function createRecipe() {
             const name = document.getElementById('recipeName').value;
             const ingredients = document.getElementById('recipeIngredients').value;
 
             if (!name || !ingredients) {
                 alert('Please fill in all fields');
+                return;
+            }
+
+            if (!selectedTag) {
+                alert('Please select a tag');
                 return;
             }
 
@@ -1205,15 +1243,24 @@
                 ingredients: ingredients,
                 tag: selectedTag,
                 creator: currentUser.name,
-                creatorId: currentUser.id,
+                creator_id: currentUser.id,
                 image: uploadedImage,
-                createdAt: new Date().toISOString()
+                created_at: new Date().toISOString()
             };
 
-            recipes.unshift(newRecipe);
-            localStorage.setItem('recipes', JSON.stringify(recipes));
-            closeCreateRecipe();
-            loadRecipes();
+            try {
+                const { data, error } = await supabase
+                    .from('recipes')
+                    .insert([newRecipe]);
+
+                if (error) throw error;
+                
+                closeCreateRecipe();
+                loadRecipes();
+            } catch (error) {
+                console.error('Error creating recipe:', error);
+                alert('Error saving recipe. Please try again.');
+            }
         }
 
         function resetCreateForm() {
