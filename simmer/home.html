@@ -3,100 +3,238 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simmer | Discover & Share Recipes</title>
-    <!-- Supabase JS -->
+    <title>Simmer | Discover Recipes</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
-        .recipe-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
-        .recipe-card:hover { transform: translateY(-4px); }
-        /* Smooth transitions for theme switching */
-        body { transition: background-color 0.3s ease, color 0.3s ease; }
-        .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); }
-        .dark .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(10px); }
+        .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px); }
+        .dark .glass { background: rgba(15, 23, 42, 0.8); }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-thumb { background: #ed8936; border-radius: 10px; }
+        .recipe-card { cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .recipe-card:hover { transform: scale(1.02); }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen">
 
-    <!-- Auth Guard Overlay (Loading) -->
-    <div id="loading-overlay" class="fixed inset-0 z-50 flex items-center justify-center bg-white dark:bg-slate-950">
-        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-500"></div>
-    </div>
-
-    <!-- Login Screen -->
-    <div id="login-screen" class="hidden flex flex-col items-center justify-center min-h-screen p-6">
-        <div class="w-full max-w-md text-center">
-            <div class="inline-flex p-4 bg-orange-100 dark:bg-orange-900/30 rounded-2xl mb-6">
-                <i data-lucide="flame" class="w-10 h-10 text-orange-600"></i>
-            </div>
-            <h1 class="text-4xl font-extrabold tracking-tight mb-2">Simmer</h1>
-            <p class="text-slate-500 dark:text-slate-400 mb-10 text-lg">Your kitchen's digital notebook.</p>
-            <button onclick="login()" class="w-full flex items-center justify-center gap-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl font-semibold shadow-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-all">
-                <img src="https://www.google.com/favicon.ico" class="w-5 h-5">
-                Continue with Google
+    <!-- Modal for Recipe Details -->
+    <div id="detail-modal" class="fixed inset-0 z-[60] hidden flex items-center justify-center p-4 glass">
+        <div class="bg-white dark:bg-slate-900 w-full max-w-2xl rounded-3xl p-8 shadow-2xl relative max-h-[85vh] overflow-y-auto border border-slate-200 dark:border-slate-800">
+            <button onclick="closeModal()" class="absolute top-6 right-6 p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full">
+                <i data-lucide="x" class="w-6 h-6"></i>
             </button>
+            <div id="modal-body"></div>
         </div>
     </div>
 
-    <!-- Main Content -->
-    <div id="app-screen" class="hidden">
-        <!-- Sticky Nav -->
-        <nav class="sticky top-0 z-40 border-b border-slate-200 dark:border-slate-800 glass">
-            <div class="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between gap-4">
-                <div class="flex items-center gap-2">
-                    <i data-lucide="flame" class="w-8 h-8 text-orange-600"></i>
-                    <span class="text-2xl font-bold tracking-tight hidden sm:block">Simmer</span>
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 border-b border-slate-200 dark:border-slate-800 glass">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between gap-4">
+            <div class="flex items-center gap-2">
+                <div class="bg-orange-500 p-1.5 rounded-lg">
+                    <i data-lucide="flame" class="w-6 h-6 text-white"></i>
                 </div>
+                <span class="text-2xl font-black tracking-tighter">SIMMER</span>
+            </div>
 
-                <div class="flex-1 max-w-xl relative">
-                    <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
-                    <input type="text" id="searchBar" oninput="fetchRecipes()" placeholder="Search recipes or ingredients..." 
-                           class="w-full bg-slate-100 dark:bg-slate-900 border-none rounded-2xl py-2.5 pl-11 pr-4 focus:ring-2 focus:ring-orange-500 transition-all outline-none">
-                </div>
+            <div class="flex-1 max-w-md relative hidden md:block">
+                <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+                <input type="text" id="searchBar" oninput="fetchRecipes()" placeholder="Search ingredients..." 
+                       class="w-full bg-slate-100 dark:bg-slate-800 border-none rounded-2xl py-2 pl-11 pr-4 focus:ring-2 focus:ring-orange-500 outline-none">
+            </div>
 
-                <div class="flex items-center gap-3">
-                    <button onclick="logout()" class="p-2.5 rounded-xl text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-                        <i data-lucide="log-out" class="w-5 h-5"></i>
-                    </button>
+            <div class="flex items-center gap-3">
+                <a href="profile.html" class="flex items-center gap-2 p-1.5 pr-4 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                    <img id="nav-avatar" src="" class="w-8 h-8 rounded-full border border-orange-200 hidden">
+                    <span class="text-sm font-bold hidden lg:block">My Kitchen</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-6 py-8">
+        
+        <!-- SaaS Filter Bar -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+            <div class="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar">
+                <button onclick="setFilter('trending')" class="filter-btn active bg-orange-500 text-white px-5 py-2 rounded-full text-sm font-bold shadow-lg shadow-orange-500/30">Trending</button>
+                <button onclick="setFilter('newest')" class="filter-btn bg-white dark:bg-slate-900 px-5 py-2 rounded-full text-sm font-bold border border-slate-200 dark:border-slate-800">Newest</button>
+                <div class="h-6 w-[1px] bg-slate-300 dark:bg-slate-700 mx-2"></div>
+                <button onclick="setCategory('Breakfast')" class="cat-btn opacity-60 hover:opacity-100 text-sm font-bold">Breakfast</button>
+                <button onclick="setCategory('Dinner')" class="cat-btn opacity-60 hover:opacity-100 text-sm font-bold">Dinner</button>
+                <button onclick="setCategory('Dessert')" class="cat-btn opacity-60 hover:opacity-100 text-sm font-bold">Dessert</button>
+            </div>
+            
+            <button onclick="document.getElementById('post-area').scrollIntoView({behavior:'smooth'})" class="bg-slate-900 dark:bg-white dark:text-slate-900 text-white px-6 py-2.5 rounded-2xl font-bold text-sm flex items-center gap-2">
+                <i data-lucide="plus" class="w-4 h-4"></i> Share Recipe
+            </button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+            
+            <!-- Feed -->
+            <div class="lg:col-span-8">
+                <div id="recipe-feed" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Cards via JS -->
                 </div>
             </div>
-        </nav>
 
-        <main class="max-w-6xl mx-auto px-6 py-10">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
-                
-                <!-- Left Column: Create -->
-                <div class="lg:col-span-4">
-                    <div class="sticky top-32">
-                        <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-sm border border-slate-200 dark:border-slate-800">
-                            <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
-                                <i data-lucide="plus-circle" class="w-5 h-5 text-orange-500"></i>
-                                New Recipe
-                            </h2>
-                            <div class="space-y-4">
-                                <div>
-                                    <label class="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Title</label>
-                                    <input id="rec-title" type="text" placeholder="e.g. Grandma's Pasta" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 p-3 rounded-xl outline-none focus:border-orange-500 transition-colors">
-                                </div>
-                                <div>
-                                    <label class="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1 block">Instructions</label>
-                                    <textarea id="rec-desc" placeholder="Describe steps and ingredients..." class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 p-3 rounded-xl h-40 outline-none focus:border-orange-500 transition-colors"></textarea>
-                                </div>
-                                <button onclick="postRecipe()" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-orange-500/20 flex items-center justify-center gap-2">
-                                    Post Recipe
-                                </button>
-                            </div>
-                        </div>
+            <!-- Sidebar -->
+            <div class="lg:col-span-4 space-y-8" id="post-area">
+                <div class="bg-white dark:bg-slate-900 p-8 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-sm">
+                    <h2 class="text-xl font-black mb-6">Create Post</h2>
+                    <div class="space-y-4">
+                        <input id="rec-title" type="text" placeholder="Recipe Name" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl outline-none focus:ring-2 focus:ring-orange-500">
+                        
+                        <select id="rec-cat" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl outline-none">
+                            <option value="General">Select Category</option>
+                            <option value="Breakfast">Breakfast</option>
+                            <option value="Lunch">Lunch</option>
+                            <option value="Dinner">Dinner</option>
+                            <option value="Dessert">Dessert</option>
+                        </select>
+
+                        <textarea id="rec-ing" placeholder="Ingredients (one per line)..." class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl h-32 outline-none"></textarea>
+                        <textarea id="rec-desc" placeholder="Step-by-step instructions..." class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl h-32 outline-none"></textarea>
+                        
+                        <button onclick="postRecipe()" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-black py-4 rounded-2xl shadow-xl shadow-orange-500/20 transition-all">
+                            Publish to Simmer
+                        </button>
                     </div>
                 </div>
+            </div>
+        </div>
+    </main>
 
-                <!-- Right Column: Feed -->
-                <div class="lg:col-span-8">
-                    <div class="flex items-center justify-between mb-8">
+    <script>
+        const SB_URL = "https://czvxkgamjhvwupbnwdoh.supabase.co";
+        const SB_KEY = "sb_publishable_Ap5CvQQTTXCwyOVgFBd1Rg_Np0CBHEZ";
+        const supabase = supabase.createClient(SB_URL, SB_KEY);
+
+        let currentFilter = 'trending';
+        let currentCategory = null;
+
+        async function checkUser() {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session) {
+                document.getElementById('nav-avatar').src = session.user.user_metadata.avatar_url;
+                document.getElementById('nav-avatar').classList.remove('hidden');
+                fetchRecipes();
+            } else {
+                window.location.href = 'home.html'; // Assuming you have an index/login page
+            }
+        }
+
+        function setFilter(type) {
+            currentFilter = type;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('bg-orange-500', 'text-white'));
+            event.target.classList.add('bg-orange-500', 'text-white');
+            fetchRecipes();
+        }
+
+        function setCategory(cat) {
+            currentCategory = (currentCategory === cat) ? null : cat;
+            fetchRecipes();
+        }
+
+        async function postRecipe() {
+            const { data: { user } } = await supabase.auth.getUser();
+            const payload = {
+                title: document.getElementById('rec-title').value,
+                category: document.getElementById('rec-cat').value,
+                ingredients: document.getElementById('rec-ing').value,
+                description: document.getElementById('rec-desc').value,
+                author_email: user.email,
+                user_id: user.id
+            };
+
+            const { error } = await supabase.from('recipes').insert([payload]);
+            if (!error) {
+                location.reload();
+            }
+        }
+
+        async function fetchRecipes() {
+            const search = document.getElementById('searchBar').value;
+            let query = supabase.from('recipes').select('*');
+
+            if (currentFilter === 'trending') query = query.order('likes_count', { ascending: false });
+            else query = query.order('created_at', { ascending: false });
+
+            if (currentCategory) query = query.eq('category', currentCategory);
+            if (search) query = query.ilike('ingredients', `%${search}%`);
+
+            const { data } = await query;
+            const feed = document.getElementById('recipe-feed');
+            
+            feed.innerHTML = data.map(r => `
+                <div onclick="showDetails('${encodeURIComponent(JSON.stringify(r))}')" class="recipe-card bg-white dark:bg-slate-900 p-6 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-xl">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="px-3 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-600 text-[10px] font-black uppercase rounded-lg">${r.category}</span>
+                        <div class="flex items-center gap-1 text-slate-400 text-sm font-bold">
+                            <i data-lucide="heart" class="w-4 h-4 fill-red-500 text-red-500"></i> ${r.likes_count}
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-black mb-2">${r.title}</h3>
+                    <p class="text-slate-500 text-sm line-clamp-2 mb-4 italic">by ${r.author_email.split('@')[0]}</p>
+                    <div class="flex items-center gap-2 text-orange-500 text-xs font-bold uppercase tracking-widest">
+                        View Recipe <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function showDetails(encodedData) {
+            const r = JSON.parse(decodeURIComponent(encodedData));
+            const modal = document.getElementById('detail-modal');
+            document.getElementById('modal-body').innerHTML = `
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="bg-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold">${r.category}</span>
+                    ${r.likes_count > 10 ? '<span class="bg-yellow-400 text-black px-3 py-1 rounded-full text-xs font-bold">🔥 Trending</span>' : ''}
+                </div>
+                <h2 class="text-4xl font-black mb-2">${r.title}</h2>
+                <p class="text-slate-400 mb-8 font-medium">Chef: ${r.author_email}</p>
+                
+                <div class="grid md:grid-cols-2 gap-10">
+                    <div>
+                        <h4 class="font-black text-orange-500 uppercase tracking-widest text-sm mb-4">Ingredients</h4>
+                        <ul class="space-y-2 text-slate-600 dark:text-slate-300">
+                            ${r.ingredients.split('\n').map(i => `<li class="flex items-center gap-2"><i data-lucide="check-circle" class="w-4 h-4 text-green-500"></i> ${i}</li>`).join('')}
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-black text-orange-500 uppercase tracking-widest text-sm mb-4">Instructions</h4>
+                        <p class="text-slate-600 dark:text-slate-300 whitespace-pre-wrap leading-relaxed">${r.description}</p>
+                    </div>
+                </div>
+                <button onclick="likeRecipe('${r.id}')" class="mt-10 w-full bg-slate-100 dark:bg-slate-800 py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-500 transition">
+                    <i data-lucide="heart" class="w-5 h-5"></i> Like this Recipe
+                </button>
+            `;
+            modal.classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        async function likeRecipe(id) {
+            const { data: { user } } = await supabase.auth.getUser();
+            await supabase.from('likes').insert([{ user_id: user.id, recipe_id: id }]);
+            alert("Recipe Liked!");
+            closeModal();
+            fetchRecipes();
+        }
+
+        function closeModal() {
+            document.getElementById('detail-modal').classList.add('hidden');
+        }
+
+        // Auto theme detect
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.classList.add('dark');
+
+        checkUser();
+    </script>
+</body>
+</html>
