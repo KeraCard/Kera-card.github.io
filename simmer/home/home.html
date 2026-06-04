@@ -910,48 +910,125 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-    <!-- ========== LOGIN PAGE ========== -->
-    <div class="login-page" id="loginPage">
-        <div class="login-card">
-            <h1>🍳 Simmer</h1>
-            <p>Share & Discover Amazing Recipes</p>
-            <div class="login-buttons">
-                <button class="btn btn-google" onclick="loginWithGoogle()">
-                    <span>🔐</span> Login with Google
-                </button>
-            </div>
-            <p style="font-size: 0.85rem; color: var(--text-secondary);">Your account is secure and your privacy is protected</p>
-        </div>
-    </div>
 
-    <!-- ========== BLUR OVERLAY ========== -->
-    <div class="blur-overlay" id="blurOverlay"></div>
+<script>
+    // ⚙️ Core Configuration Variables Connected to Your California Server Pipeline
+    const SUPABASE_URL = "https://supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_Ap5CvQQTTXCwyOVgFBd1Rg_Np0CBHEZ";
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    <!-- ========== RECIPE DETAIL MODAL ========== -->
-    <div class="recipe-detail-modal" id="recipeDetailModal">
-        <div class="recipe-detail-content">
-            <button class="recipe-detail-close" onclick="closeRecipeDetail()">✕</button>
-            <div id="recipeDetailBody"></div>
-        </div>
-    </div>
+    // 🖥️ UI Elements Selector Caching
+    const loginPage = document.getElementById('loginPage');
+    const ageModal = document.getElementById('ageModal');
+    const blurOverlay = document.getElementById('blurOverlay');
 
-    <!-- ========== AGE VERIFICATION MODAL ========== -->
-    <div class="modal" id="ageModal">
-        <div class="modal-content">
-            <h2>Age Verification</h2>
-            <p>To create an account, we need to verify your age. If you're under 13, a parent or guardian must help you.</p>
-            <div class="form-group">
-                <label for="fullName">Full Name</label>
-                <input type="text" id="fullName" placeholder="Enter your full name">
-            </div>
-            <div class="form-group">
-                <label for="dob">Date of Birth</label>
-                <input type="date" id="dob">
-            </div>
-            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">This information is not shared publicly and is used only for age verification.</p>
-            <button class="btn-modal" onclick="verifyAge()">Verify & Continue</button>
-        </div>
-    </div>
+    /**
+     * 1. TRIGGER THE SECURE GOOGLE HANDSHAKE
+     */
+    async function loginWithGoogle() {
+        try {
+            const { error } = await supabase.auth.signInWithOAuth({
+                provider: 'google',
+                options: {
+                    // Automatically forwards users right back to your production address after auth
+                    redirectTo: 'https://github.io'
+                }
+            });
+            if (error) throw error;
+        } catch (err) {
+            console.error("Authentication handshake failure:", err.message);
+            alert("Google Authentication failed. Please verify network profiles.");
+        }
+    }
+
+    /**
+     * 2. ROUTING PIPELINE RUNNING ON EVERY SINGLE PAGE LOAD
+     */
+    async function initializeSessionEngine() {
+        // Fetch current active user parameters from browser local state tokens
+        const { data: { session }, error } = await supabase.auth.getSession();
+
+        if (error) {
+            console.error("Session lookup exception:", error.message);
+            return;
+        }
+
+        if (session) {
+            // A verified user is present! Completely drop the login barrier UI out of view
+            loginPage.style.display = 'none';
+            
+            // Check if this user profile already exists inside your active database metadata
+            const userEmail = session.user.email;
+            
+            // Check if this unique account has completed your custom UI age criteria profile verification step before
+            const ageVerified = localStorage.getItem(`verified_age_${session.user.id}`);
+            
+            if (!ageVerified) {
+                // First-time signup sequence path discovered! Trigger your age registration window module view
+                ageModal.classList.add('active');
+                ageModal.style.display = 'flex';
+                if (blurOverlay) blurOverlay.classList.add('active');
+            } else {
+                // Returning enterprise profile confirmed. Clear all block gates natively
+                ageModal.style.display = 'none';
+                if (blurOverlay) blurOverlay.style.display = 'none';
+                console.log(`%cWelcome back, account authenticated: ${userEmail}`, "color: #4ECDC4; font-weight: bold;");
+            }
+        } else {
+            // No session tokens discovered inside cookie headers. Lock visibility onto the core login card
+            loginPage.style.display = 'flex';
+            ageModal.style.display = 'none';
+            if (blurOverlay) blurOverlay.style.display = 'none';
+        }
+    }
+
+    /**
+     * 3. LOGIC CONTROLLER FOR CUSTOM ACCOUNT REGISTRATION FIELD ARRAYS
+     */
+    function verifyAge() {
+        const fullName = document.getElementById('fullName').value.trim();
+        const dob = document.getElementById('dob').value;
+
+        if (!fullName || !dob) {
+            alert("Please complete both account verification parameters cleanly.");
+            return;
+        }
+
+        // Quick frontend calculation gate to determine safety profile compliance thresholds
+        const birthYear = new Date(dob).getFullYear();
+        const currentYear = new Date().getFullYear();
+        const computedAge = currentYear - birthYear;
+
+        if (computedAge < 13) {
+            alert("Access Exception: Parent or guardian configuration protocol execution required for ages under 13.");
+            return;
+        }
+
+        // Fetch user context token to mark their data row metadata profile array as verified
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            if (session) {
+                // Save compliance status flag to browser context memory paths so modal never prompts this user again
+                localStorage.setItem(`verified_age_${session.user.id}`, "true");
+                
+                // Close verification modules smoothly out of viewport layers
+                ageModal.classList.remove('active');
+                ageModal.style.display = 'none';
+                if (blurOverlay) {
+                    blurOverlay.classList.remove('active');
+                    blurOverlay.style.display = 'none';
+                }
+                
+                alert(`Account profile securely configured! Welcome to Simmer, ${fullName}!`);
+                window.location.reload(); // Hard sync browser view states
+            } else {
+                alert("Session loss encountered. Please restart authorization flow steps.");
+            }
+        });
+    }
+
+    // Execute session validation sequence automatically as soon as window DOM properties boot
+    window.addEventListener('DOMContentLoaded', initializeSessionEngine);
+</script>
 
     <!-- ========== MAIN APP ========== -->
     <div class="app-container" id="appContainer">
